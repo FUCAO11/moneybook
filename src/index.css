@@ -1,39 +1,37 @@
+/* ---------- 基础设置 ---------- */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
+  /* 不强制 dark 模式，交给系统 & 组件库 */
+  /* color-scheme: light dark;  // 移除以避免意外暗色背景 */
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
+/* 让根元素占满视口高度，后面好计算布局 */
+html, body, #root { height: 100%; }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  background: #fff;          /* 白底，避免出现深色背景 */
+  color: #222;
+
+  /* 适配 iPhone 刘海/底部手势区 */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+
+  /* 避免整屏“橡皮筋”拖动感，只让内部滚动容器滚动 */
+  overscroll-behavior-y: none;
+
+  -webkit-tap-highlight-color: transparent;
   min-width: 320px;
-  min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
+/* 链接与按钮保持你原先的风格（可按需保留/调整） */
+a { font-weight: 500; color: #646cff; text-decoration: none; }
+a:hover { color: #535bf2; }
 
 button {
   border-radius: 8px;
@@ -42,27 +40,117 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #f9f9f9;
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+button:hover { border-color: #646cff; }
+button:focus, button:focus-visible { outline: 4px auto -webkit-focus-ring-color; }
+
+/* ---------- 布局壳：居中 + 限宽 + 只让内部滚动 ---------- */
+/* 外层壳，负责水平居中和限定宽度 */
+.app-shell {
+  max-width: 720px;                   /* 你可以改成 640/680 等 */
+  margin: 0 auto;
+  padding: 0 16px;
+
+  /* 使用动态视口单位 + 扣掉安全区，避免 iOS 地址栏高度变化造成跳动 */
+  height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* 内层滚动容器，只滚动这里，避免整屏被拖动 */
+.app-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
+
+/* 可选：标题大小保持 */
+h1 { font-size: 2rem; line-height: 1.2; }
+
+/* 可选：亮色偏好时的微调（保留原先的样式） */
+@media (prefers-color-scheme: light) {
+  a:hover { color: #747bff; }
+}
+
+/* 底部 Tab 样式（自适应安全区） */
+.tabbar {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid #eee;
+  background: #fff;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.tabbar .tab {
+  text-align: center;
+  padding: 12px 8px;
+  color: #555;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.tabbar .tab.active {
+  color: #0d6efd;
+  font-weight: 600;
+}
+
+/* 让根与壳工作（若还没加过，请保留） */
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: #fff;
+  color: #222;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+  min-width: 320px;
+}
+.app-shell {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 16px;
+  height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+}
+.app-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 让 page 成为一个明确的页面容器，便于选择器生效 */
+.page {
+  display: block;
+  min-height: 100%;
+}
+
+/* 规则：每个页面根节点的“第一个子元素”作为吸顶区
+   你的各页面都是：<div style={{padding:12}}> ...第一行在这里... </div>
+   所以这个选择器正好命中“标题+按钮”那一行 */
+/* 规则：每个页面根节点的“第一个子元素”作为吸顶区 */
+.page > * > :first-child {
+  position: -webkit-sticky;  /* ✅ iOS Safari 需要这个前缀 */
+  position: sticky;
+  top: 0;                    /* ✅ body 已经有 safe-area 顶部内边距，这里用 0 即可 */
+  background: #fff;
+  z-index: 5;
+
+  /* 视觉细节可保留 */
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+  /* 可选：加一点阴影更像原生导航
+  box-shadow: 0 1px 0 rgba(0,0,0,.06);
+  */
+}
+
+
+/* TabBar 已经是布局末尾的块级元素，不需要 fixed。
+   如需更明显的悬浮感，可加轻微阴影（可选）： */
+/* .tabbar { box-shadow: 0 -4px 12px rgba(0,0,0,0.06); } */

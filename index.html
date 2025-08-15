@@ -2,18 +2,24 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <!-- 站点小图标（无关 iOS 主屏图标） -->
+    <!-- 站点小图标（与 iOS 主屏图标无关） -->
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
 
-    <!-- 关键：适配全面屏 & 允许 Web App 模式 -->
+    <!-- 适配全面屏 & 安全区 -->
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="MoneyBook" />
-    <meta name="theme-color" content="#0d6efd" />
 
-    <!-- iOS 主屏幕图标优先使用这个 -->
+    <!-- 关键：以“Web App 模式”从主屏打开（无地址栏） -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- 状态栏样式（白底黑字）；如果想悬浮效果可改为 black-translucent -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+    <!-- iOS 主屏图标（iOS 对这个更敏感） -->
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+
+    <!-- 主题色：决定状态栏/任务卡片色，改成白色去掉蓝条 -->
+    <meta name="theme-color" content="#ffffff" />
 
     <title>MoneyBook</title>
   </head>
@@ -22,3 +28,4 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
+
